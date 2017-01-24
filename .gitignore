@@ -89,4 +89,4 @@ ENV/
 .ropeproject
 
 # Train data
-.h5
+*.h5
