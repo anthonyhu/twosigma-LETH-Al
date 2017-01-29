@@ -93,6 +93,3 @@ ENV/
 
 # PyCharm
 .idea
-
-# Python notebook
-*.ipynb
