@@ -93,7 +93,7 @@ class Observation(object):
 
 class Environment(object):
     def __init__(self):
-        with pd.HDFStore("../input/train.h5", "r") as hfdata:
+        with pd.HDFStore("train.h5", "r") as hfdata:
             self.timestamp = 0
             fullset = hfdata.get("train")
             self.unique_timestamp = fullset["timestamp"].unique()
