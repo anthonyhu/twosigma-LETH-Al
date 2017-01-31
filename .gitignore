@@ -93,3 +93,6 @@ ENV/
 
 # PyCharm
 .idea
+
+# Second notebook
+Two Sigmas while waiting.ipynb
