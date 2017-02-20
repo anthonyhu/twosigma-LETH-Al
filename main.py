@@ -33,6 +33,33 @@ train = train.fillna(d_mean)
 
 train.loc[:, "is_null"] = train_NA_values
 
+# Add mask with best features selection
+model_2_mask = [ True, False, False,  True, False,  True, False,  True,  True,
+       False, False,  True, False, False,  True,  True,  True,  True,
+       False,  True, False,  True,  True,  True,  True, False,  True,
+        True, False,  True, False,  True, False, False,  True,  True,
+       False,  True,  True, False,  True, False, False,  True,  True,
+       False,  True,  True, False,  True,  True,  True,  True,  True,
+       False,  True,  True,  True,  True,  True,  True,  True,  True,
+        True,  True, False,  True,  True, False, False,  True, False,
+        True,  True, False, False, False,  True,  True, False,  True,
+        True,  True, False,  True,  True,  True,  True,  True,  True,
+        True,  True,  True,  True,  True, False,  True,  True,  True,
+        True, False, False, False,  True,  True,  True,  True, False,
+       False, False, False, False, False, False, False, False,  True,
+        True, False, False,  True,  True, False, False, False,  True,
+       False, False,  True,  True, False, False, False, False,  True,
+        True, False,  True, False,  True,  True,  True, False,  True,
+       False,  True, False,  True, False,  True, False,  True, False,
+        True, False,  True,  True, False,  True,  True, False, False,
+       False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False,  True, False, False, False,
+       False, False, False, False,  True, False, False, False, False,
+        True, False,  True, False, False, False, False, False, False,
+       False, False, False, False, False,  True, False, False, False,
+       False, False,  True, False, False,  True, False, False, False,  True]
+train = train.loc[:, train.columns[model_2_mask]]
+
 low_y_cut = -0.075
 high_y_cut = 0.075
 y_is_above_cut = (o.train.y > high_y_cut)
@@ -71,6 +98,9 @@ while True:
     test = test.fillna(d_mean)
     
     test.loc[:, "is_null"] = test_NA_values
+
+    # Add mask with best features selection
+    test = test.loc[:, test.columns[model_2_mask]]
 
     pred = o.target
     test_technical_20 = np.array(test["technical_20"].values).reshape(-1, 1)
