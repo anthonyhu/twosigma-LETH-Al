@@ -133,9 +133,11 @@ if add_diff_ft:
     for elt in diff_cols:
         #a quick way to obtain deltas from one month to another but it is false on the first
         #month of each id
-        train[elt+"_d"]= train[elt].rolling(2).apply(lambda x:x[1]-x[0]).fillna(0)
+        train[elt+"_delta"] = (train_cut.groupby(["id"])[elt].shift(0) 
+                               - train_cut.groupby(["id"])[elt].shift(1)).fillna(0)
+        #train[elt].rolling(2).apply(lambda x:x[1]-x[0]).fillna(0)
     #removing month 0 to reduce the impact of erroneous deltas
-    train=train[train.timestamp!=0]
+    #train=train[train.timestamp!=0]
 
 print(train.shape)
 cols=[x for x in train.columns if x not in ['id', 'timestamp', 'y']]
