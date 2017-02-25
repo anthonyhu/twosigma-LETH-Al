@@ -57,7 +57,7 @@ class createLinearFeatures:
         random.shuffle(list_vars)
         
 
-        lastscores=np.zeros(self.n)+1e15
+        
         
         list_neighbours = ['fundamental_44', 'technical_37', 'fundamental_53', 'technical_13_na', 'fundamental_37', 'fundamental_0', 'technical_14', 'fundamental_40', 'technical_44', 'technical_9', 'fundamental_23', 'technical_21', 'fundamental_25', 'fundamental_55', 'fundamental_58', 'technical_33', 'fundamental_24', 'fundamental_26', 'technical_24', 'fundamental_61', 'fundamental_5', 'technical_5', 'derived_1', 'technical_22_d', 'fundamental_52', 'technical_20', 'fundamental_50', 'technical_9_na', 'technical_39', 'fundamental_7']
         for elt in list_neighbours: #list_vars[:self.n]:
@@ -66,23 +66,30 @@ class createLinearFeatures:
         
         list_vars = list(set(list_vars) - set(list_neighbours))
         
-        for elt in list_vars:
-            indice=0
+        lastscores=np.zeros(len(list_vars))+1e15
+        list_vars_not_used = [True] * len(list_vars)
+        
+        neighbours_index = 0
+        
+        for elt2 in self.neighbours:
             scores=[]
-            for elt2 in self.neighbours:
-                if len(elt2)<self.max_elts:
+            for elt in list_vars:
+                vars_index = 0
+                if list_vars_not_used[vars_index]:
                     clf=linear_model.LinearRegression(fit_intercept=False, normalize=True, copy_X=True, n_jobs=-1) 
                     clf.fit(train[elt2+[elt]], y)
                     scores.append(metrics.mean_squared_error(y,clf.predict(train[elt2 + [elt]])))
-                    indice=indice+1
+                    vars_index += 1
                 else:
-                    scores.append(lastscores[indice])
-                    indice=indice+1
+                    scores.append(lastscores[vars_index])
+                    vars_index += 1
             gains=lastscores-scores
             if gains.max()>0:
                 temp=gains.argmax()
                 lastscores[temp]=scores[temp]
-                self.neighbours[temp].append(elt)
+                self.neighbours[neighbours_index].append(list_vars[temp])
+                list_vars_not_used[temp] = False
+            neighbours_index += 1
 
         indice=0
         for elt in self.neighbours:
