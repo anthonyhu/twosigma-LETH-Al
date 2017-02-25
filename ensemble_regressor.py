@@ -1,8 +1,15 @@
 import kagglegym
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import random
 from sklearn import ensemble, linear_model, metrics
+
+from time import time
+import bz2
+import base64
+import pickle as pk
+import warnings
 
 env = kagglegym.make()
 o = env.reset()
