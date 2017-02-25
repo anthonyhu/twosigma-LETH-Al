@@ -1,7 +1,6 @@
 import kagglegym
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import random
 from sklearn import ensemble, linear_model, metrics
 
@@ -18,19 +17,21 @@ print(train.shape)
 
 train["nbnulls"]=train.isnull().sum(axis=1)
 
-excl = ['id', 'timestamp', 'y']
-#excl = [env.ID_COL_NAME, env.SAMPLE_COL_NAME, env.TARGET_COL_NAME, env.TIME_COL_NAME]
+#excl = ['id', 'timestamp', 'y']
+excl = [env.ID_COL_NAME, env.SAMPLE_COL_NAME, env.TARGET_COL_NAME, env.TIME_COL_NAME]
 col=[x for x in train.columns if x not in excl]
 
 rnd=17
 
 #keeping na information on some columns (best selected by the tree algorithms)
 add_nas_ft=True
-nas_cols=['technical_9', 'technical_0', 'technical_32', 'technical_16', 'technical_38', 
-'technical_44', 'technical_20', 'technical_30', 'technical_13']
+nas_cols = list(col)
+#['technical_9', 'technical_0', 'technical_32', 'technical_16', 'technical_38', 
+#'technical_44', 'technical_20', 'technical_30', 'technical_13']
 #columns kept for evolution from one month to another (best selected by the tree algorithms)
 add_diff_ft=True
-diff_cols=['technical_22','technical_20', 'technical_30', 'technical_13', 'technical_34']
+diff_cols = list(col)
+#['technical_22','technical_20', 'technical_30', 'technical_13', 'technical_34']
 
 #homemade class used to infer randomly on the way the model learns
 class createLinearFeatures:
@@ -44,18 +45,26 @@ class createLinearFeatures:
         self.clfs=[]
         
     def fit(self,train,y):
+        
+        
         if self.rnd!=None:
             random.seed(self.rnd)
         if self.max_elts==None:
             self.max_elts=len(train.columns)
+            
+        # Different shuffle with Kaggle and notebook
         list_vars=list(train.columns)
         random.shuffle(list_vars)
         
-        lastscores=np.zeros(self.n)+1e15
 
-        for elt in list_vars[:self.n]:
+        lastscores=np.zeros(self.n)+1e15
+        
+        list_neighbours = ['fundamental_44', 'technical_37', 'fundamental_53', 'technical_13_na', 'fundamental_37', 'fundamental_0', 'technical_14', 'fundamental_40', 'technical_44', 'technical_9', 'fundamental_23', 'technical_21', 'fundamental_25', 'fundamental_55', 'fundamental_58', 'technical_33', 'fundamental_24', 'fundamental_26', 'technical_24', 'fundamental_61', 'fundamental_5', 'technical_5', 'derived_1', 'technical_22_d', 'fundamental_52', 'technical_20', 'fundamental_50', 'technical_9_na', 'technical_39', 'fundamental_7']
+        for elt in list_neighbours: #list_vars[:self.n]:
             self.neighbours.append([elt])
-        list_vars=list_vars[self.n:]
+        #list_vars=list_vars[self.n:]
+        
+        list_vars = list(set(list_vars) - set(list_neighbours))
         
         for elt in list_vars:
             indice=0
